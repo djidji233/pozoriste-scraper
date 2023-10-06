@@ -6,6 +6,9 @@ from email.message import EmailMessage
 
 from datetime import datetime
 
+import schedule
+import time
+
 def check_dates():
     URL = 'https://zvezdarateatar.rs/predstava/voz/21/#'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
@@ -32,9 +35,20 @@ def send_email(message):
     msg['To'] = "djolezile@gmail.com"
     msg.set_content(message)
     # send email
-    # with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-    #     smtp.login(email_address, email_password)
-    #     smtp.send_message(msg)
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(email_address, email_password)
+        smtp.send_message(msg)
     return message
 
 # check_dates()
+
+def job():
+    check_dates()
+
+schedule.every(5).minutes.do(job)
+# schedule.every().monday.at('10:00', 'Europe/Amsterdam').do(job)
+# schedule.every().month.at('10:00', 'Europe/Amsterdam').do(job)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
