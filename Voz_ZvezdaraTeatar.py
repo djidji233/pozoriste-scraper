@@ -16,9 +16,9 @@ def check_dates():
     # print(predstava_dates)
 
     if(predstava_dates):
-        send_email(predstava_dates)
+        return send_email(predstava_dates)
     else:
-        send_email('error getting dates')
+        return send_email('error getting dates')
 
 def send_email(message):
     # set your email and password
@@ -32,9 +32,9 @@ def send_email(message):
     msg['To'] = "djolezile@gmail.com"
     msg.set_content(message)
     # send email
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(email_address, email_password)
-        smtp.send_message(msg)
-    # print('Email sent!')
+    # with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+    #     smtp.login(email_address, email_password)
+    #     smtp.send_message(msg)
+    return message
 
-check_dates()
+# check_dates()
