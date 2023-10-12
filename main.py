@@ -3,25 +3,18 @@ from bs4 import BeautifulSoup
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime, date
-# import schedule
-# import time
 
 def send_email(subject, content):
-    # set your email and password
-    # please use App Password
     email_address = "kassad.tips@gmail.com"
-    email_password = "orntdmglacxlbskm"
-    # create email
+    email_password = "orntdmglacxlbskm" # app password
     msg = EmailMessage()
     msg['Subject'] = subject + " - " + datetime.now().strftime('%b')
     msg['From'] = email_address
     msg['To'] = "djolezile@gmail.com"
     msg.set_content(content)
-    # send email
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(email_address, email_password)
         smtp.send_message(msg)
-    # return content
 
 def check_dates_Voz():
     URL = 'https://zvezdarateatar.rs/predstava/voz/21/#'
@@ -80,10 +73,4 @@ def job():
         check_dates_Edip()
         check_dates_UrnebesnaTragedija()
 
-# schedule.every(30).seconds.do(job)
-# # schedule.every().day.at("09:00", "Europe/Amsterdam").do(job)
-
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
 job()
