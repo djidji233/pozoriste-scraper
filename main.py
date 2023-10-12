@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime, date
-import schedule
-import time
+# import schedule
+# import time
 
 def send_email(subject, content):
     # set your email and password
