@@ -4,4 +4,4 @@ Scrapes websites for 3 favorite theater shows and checks for new dates (at the e
 
 Technologies used: Python with BeautifulSoup
 
-Deployment: Railway
+Deployment: Railway (with built-in Cron scheduler for 9 AM)
