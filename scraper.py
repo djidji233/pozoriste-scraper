@@ -42,8 +42,8 @@ def check_dates_Edip():
 
     dates = soup.find_all('div', 'calendar__item-date js-date')
     content = ''
-    for date in dates:
-         day_div = date.find('div', 'day')
+    for date_div in dates:
+         day_div = date_div.find('div', 'day')
          day = day_div.find('strong').text
          month = day_div.find('span').text
          content += day+' '+month+'\n'
@@ -61,9 +61,9 @@ def check_dates_UrnebesnaTragedija():
 
     dates = soup.find_all('div', 'repertoarwide-entry-date')
     content = ''
-    for date in dates:
-        day = date.contents[1].strip()
-        month = date.find('span', 'mesec').text
+    for date_div in dates:
+        day = date_div.contents[1].strip()
+        month = date_div.find('span', 'mesec').text
         content += day+' '+month+'\n'
 
     if(dates):
