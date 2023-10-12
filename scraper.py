@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime, date
+import schedule
+import time
 
 def send_email(subject, content):
     # set your email and password
@@ -73,9 +75,14 @@ def check_dates_UrnebesnaTragedija():
      
 
 def job():
-    if(date.today().day > 27 or date.today().day < 4):
+    # if(date.today().day > 27 or date.today().day < 4):
         check_dates_Voz() 
         check_dates_Edip()
         check_dates_UrnebesnaTragedija()
 
-job()
+schedule.every(30).seconds.do(job)
+# schedule.every().day.at("09:00", "Europe/Amsterdam").do(job)
+
+while True:
+    schedule.run_pending()
+    time.sleep(1)
