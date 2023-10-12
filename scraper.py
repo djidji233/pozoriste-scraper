@@ -80,9 +80,10 @@ def job():
         check_dates_Edip()
         check_dates_UrnebesnaTragedija()
 
-schedule.every(30).seconds.do(job)
-# schedule.every().day.at("09:00", "Europe/Amsterdam").do(job)
+# schedule.every(30).seconds.do(job)
+# # schedule.every().day.at("09:00", "Europe/Amsterdam").do(job)
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# while True:
+#     schedule.run_pending()
+#     time.sleep(1)
+job()
