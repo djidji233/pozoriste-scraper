@@ -68,7 +68,7 @@ def check_dates_UrnebesnaTragedija():
      
 
 def job():
-    # if(date.today().day > 27 or date.today().day < 4):
+    if(date.today().day > 27 or date.today().day < 4):
         check_dates_Voz() 
         check_dates_Edip()
         check_dates_UrnebesnaTragedija()
