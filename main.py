@@ -3,6 +3,17 @@ from bs4 import BeautifulSoup
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime, date
+import time
+
+global_email_content = ''
+
+def append_to_global(s):
+    global global_email_content
+    global_email_content += s
+
+def clear_global():
+    global global_email_content
+    global_email_content = ''
 
 def send_email(subject, content):
     email_address = "kassad.tips@gmail.com"
@@ -25,9 +36,15 @@ def check_dates_Voz():
     dates = soup.find('span', class_='predstava-dates').get_text().strip()
 
     if(dates):
-        return send_email("Voz - Zvezdara Teatar", dates)
+        # return send_email("Voz - Zvezdara Teatar", dates)
+        append_to_global('Voz - Zvezdara Teatar:\n')
+        append_to_global(dates + '\n')
+        append_to_global('\n')
     else:
-        return send_email('Error getting dates')
+        # return send_email('Error getting dates')
+        append_to_global('Voz - Zvezdara Teatar:\n')
+        append_to_global('Error getting dates\n')
+        append_to_global('\n')
 
 def check_dates_Edip():
     URL = 'https://www.jdp.rs/performance/edip/'
@@ -44,9 +61,14 @@ def check_dates_Edip():
          content += day+' '+month+'\n'
 
     if(dates):
-        return send_email("Edip - JDP", content)
+        # return send_email("Edip - JDP", content)
+        append_to_global('Edip - JDP:\n')
+        append_to_global(content + '\n')
+    
     else:
-        return send_email('Error getting dates')
+        # return send_email('Error getting dates')
+        append_to_global('Edip - JDP:\n')
+        append_to_global('Error getting dates\n')
     
 def check_dates_UrnebesnaTragedija():
     URL = 'https://www.narodnopozoriste.rs/lat/predstave/urnebesna-tragedija'
@@ -62,15 +84,22 @@ def check_dates_UrnebesnaTragedija():
         content += day+' '+month+'\n'
 
     if(dates):
-        return send_email("Urnebesna Tragedija - Narodno", content)
+        # return send_email("Urnebesna Tragedija - Narodno", content)
+        append_to_global('Urnebesna Tragedija - Narodno:\n')
+        append_to_global(content + '\n')
     else:
-        return send_email('Error getting dates')
+        # return send_email('Error getting dates')
+        append_to_global('Urnebesna Tragedija - Narodno:\n')
+        append_to_global('Error getting dates\n')
      
 
 def job():
-    if(date.today().day > 25 or date.today().day < 3):
+    if(date.today().day > 24):
         check_dates_Voz() 
         check_dates_Edip()
         check_dates_UrnebesnaTragedija()
+        time.sleep(8) # in case scraping takes some time
+        send_email('Pozoriste - datumi', global_email_content)
+        clear_global()
 
 job()
