@@ -27,28 +27,33 @@ def send_email(subject, content):
         smtp.login(email_address, email_password)
         smtp.send_message(msg)
 
-def check_dates_Voz():
-    append_to_global('Voz - Zvezdara Teatar:\n')
-    URL = 'https://zvezdarateatar.rs/predstava/voz/21/#'
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    page = requests.get(URL, headers=headers)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    dates = soup.find_all('span', 'predstava-dates')
+# KUPLJENO !!!
+# def check_dates_Voz():
+#     append_to_global('Voz - Zvezdara Teatar:\n')
+#     URL = 'https://zvezdarateatar.rs/predstava/voz/21/#'
+#     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
+#     page = requests.get(URL, headers=headers)
+#     soup = BeautifulSoup(page.content, 'html.parser')
+#     dates = soup.find_all('span', 'predstava-dates')
     
-    if(dates):
-        for d in dates:
-            d = d.get_text().strip()
-            append_to_global(d + '\n')
-    else:
-        append_to_global('Error getting dates\n')
+#     if(dates):
+#         for d in dates:
+#             d = d.get_text().strip()
+#             append_to_global(d + '\n')
+#     else:
+#         append_to_global('Error getting dates\n')
     
-    append_to_global('\n')
+#     append_to_global('\n')
 
 def check_dates_Milutin():
     append_to_global('Milutin - Zvezdara Teatar:\n')
     URL = 'https://zvezdarateatar.rs/predstava/knjiga-o-milutinu-deo-prvi/10/'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    page = requests.get(URL, headers=headers)
+    try:
+        page = requests.get(URL, headers=headers)
+    except:
+        append_to_global('Error getting dates\n')
+        return
     soup = BeautifulSoup(page.content, 'html.parser')
     dates = soup.find_all('span', 'predstava-dates')
     
@@ -65,7 +70,11 @@ def check_dates_Edip():
     append_to_global('Edip - JDP:\n')
     URL = 'https://www.jdp.rs/performance/edip/'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    page = requests.get(URL, headers=headers)
+    try:
+        page = requests.get(URL, headers=headers)
+    except:
+        append_to_global('Error getting dates\n')
+        return
     soup = BeautifulSoup(page.content, 'html.parser')
     dates = soup.find_all('div', 'calendar__item-date js-date')
     content = ''
@@ -86,7 +95,11 @@ def check_dates_UrnebesnaTragedija():
     append_to_global('Urnebesna Tragedija - Narodno:\n')
     URL = 'https://www.narodnopozoriste.rs/lat/predstave/urnebesna-tragedija'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    page = requests.get(URL, headers=headers)
+    try:
+        page = requests.get(URL, headers=headers)
+    except:
+        append_to_global('Error getting dates\n')
+        return
     soup = BeautifulSoup(page.content, 'html.parser')
     dates = soup.find_all('div', 'repertoarwide-entry-date')
     content = ''
@@ -104,7 +117,7 @@ def check_dates_UrnebesnaTragedija():
 
 def pozoriste_job():
     if(date.today().day >= 20 and date.today().day < 26):
-        check_dates_Voz() 
+        # check_dates_Voz() 
         check_dates_Milutin()
         check_dates_Edip()
         check_dates_UrnebesnaTragedija()
@@ -117,7 +130,11 @@ pozoriste_job()
 def check_Arena_Today():
     URL = 'https://starkarena.co.rs/lat/dogadjaji/'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    page = requests.get(URL, headers=headers)
+    try:
+        page = requests.get(URL, headers=headers)
+    except:
+        send_email('ARENA DANAS', 'Error getting ARENA page!')
+        return
     soup = BeautifulSoup(page.content, 'html.parser')
 
     head_info = soup.find('div', 'head_info')
