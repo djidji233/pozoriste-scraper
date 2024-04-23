@@ -116,13 +116,54 @@ def check_dates_UrnebesnaTragedija():
 
     append_to_global('\n') 
 
+def check_dates_Ljubavno_Pismo():
+    append_to_global('Ljubavno Pismo - Atelje 212:\n')
+    URL = 'https://bilet.atelje212.rs/qrydata.php'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
+    form_data = {
+        'q': '1',
+        'godina': date.today().year,
+        'mesec': date.today().month + 1,
+        'dan': '0',
+        'sdsp': '1',
+        'trazi': 'ljubavno',
+        'user_tipid': '1',
+        'sap': '1',
+        'ss': '0',
+        'tip_prikaza': '0',
+    }
+    '''
+        TODO (IDEA):
+        - switch to this query for every scraper
+        - add listener that fetches every minute during the selected days of month
+            - railway cron supports something like this:
+                * 10-11 20,21,22,23,24,25 * * 
+                (Every minute, between 10:00 and 11:59, on day 20, 21, 22, 23, 24, and 25 of the month)
+        - only if results are found, send email
+    '''
+    try:
+        results = requests.post(URL, headers=headers, data=form_data).json()
+    except requests.RequestException as e:
+        append_to_global('Error getting dates\n')
+    
+    if(len(results) > 0):
+        for r in results:
+            datum = r['datum']
+            vreme = r['vreme'][0:5]
+            datum_formatted = datetime.strptime(datum, '%Y-%m-%d').strftime('%d. %b')
+            content = "{} - {}\n".format(datum_formatted, vreme)
+            append_to_global(content)
+            
+    append_to_global('\n')
+
 def pozoriste_job():
     if(date.today().day >= 20 and date.today().day < 26):
         # check_dates_Voz() 
         # check_dates_Milutin()
+        check_dates_Ljubavno_Pismo()
         check_dates_Edip()
         check_dates_UrnebesnaTragedija()
-        time.sleep(8) # in case scraping takes some time
+        # time.sleep(8) # in case scraping takes some time
         send_email('Pozoriste - datumi', global_email_content)
         clear_global()
 
