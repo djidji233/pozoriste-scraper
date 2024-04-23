@@ -45,26 +45,27 @@ def send_email(subject, content):
     
 #     append_to_global('\n')
 
-def check_dates_Milutin():
-    append_to_global('Milutin - Zvezdara Teatar:\n')
-    URL = 'https://zvezdarateatar.rs/predstava/knjiga-o-milutinu-deo-prvi/10/'
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    try:
-        page = requests.get(URL, headers=headers)
-    except:
-        append_to_global('Error getting dates\n')
-        return
-    soup = BeautifulSoup(page.content, 'html.parser')
-    dates = soup.find_all('span', 'predstava-dates')
+# KUPLJENO !!!
+# def check_dates_Milutin():
+#     append_to_global('Milutin - Zvezdara Teatar:\n')
+#     URL = 'https://zvezdarateatar.rs/predstava/knjiga-o-milutinu-deo-prvi/10/'
+#     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
+#     try:
+#         page = requests.get(URL, headers=headers)
+#     except:
+#         append_to_global('Error getting dates\n')
+#         return
+#     soup = BeautifulSoup(page.content, 'html.parser')
+#     dates = soup.find_all('span', 'predstava-dates')
     
-    if(dates):
-        for d in dates:
-            d = d.get_text().strip()
-            append_to_global(d + '\n')
-    else:
-        append_to_global('Error getting dates\n')
+#     if(dates):
+#         for d in dates:
+#             d = d.get_text().strip()
+#             append_to_global(d + '\n')
+#     else:
+#         append_to_global('Error getting dates\n')
     
-    append_to_global('\n')
+#     append_to_global('\n')
 
 def check_dates_Edip():
     append_to_global('Edip - JDP:\n')
@@ -118,7 +119,7 @@ def check_dates_UrnebesnaTragedija():
 def pozoriste_job():
     if(date.today().day >= 20 and date.today().day < 26):
         # check_dates_Voz() 
-        check_dates_Milutin()
+        # check_dates_Milutin()
         check_dates_Edip()
         check_dates_UrnebesnaTragedija()
         time.sleep(8) # in case scraping takes some time
