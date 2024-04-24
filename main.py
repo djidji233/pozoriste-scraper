@@ -91,6 +91,36 @@ def check_dates_Edip():
         append_to_global('Error getting dates\n')
     
     append_to_global('\n')
+
+def check_dates_Edip_2():
+    append_to_global('Edip - JDP v2:\n')
+    URL = 'https://blagajna.jdp.rs/qrydata.php'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
+    form_data = {
+        'q': '1',
+        'godina': date.today().year,
+        'mesec': date.today().month + 1,
+        'sdsp': '1',
+        'trazi': 'edip',
+        'user_tipid': '',
+        'sap': '1',
+        'ss': '0',
+        'tip_prikaza': '0',
+    }
+    try:
+        results = requests.post(URL, headers=headers, data=form_data).json()
+    except requests.RequestException as e:
+        append_to_global('Error getting dates\n')
+        
+    if(len(results) > 0):
+        for r in results:
+            datum = r['datum']
+            vreme = r['vreme'][0:5]
+            datum_formatted = datetime.strptime(datum, '%Y-%m-%d').strftime('%d. %b')
+            content = "{} - {}\n".format(datum_formatted, vreme)
+            append_to_global(content)
+            
+    append_to_global('\n')
     
 def check_dates_UrnebesnaTragedija():
     append_to_global('Urnebesna Tragedija - Narodno:\n')
@@ -158,6 +188,7 @@ def check_dates_Ljubavno_Pismo():
 
 def pozoriste_job():
     if(date.today().day >= 20 and date.today().day < 26):
+        # check_dates_Edip_2() TODO trying new stuff
         # check_dates_Voz() 
         # check_dates_Milutin()
         check_dates_Ljubavno_Pismo()
