@@ -10,11 +10,12 @@ import ljubavno_pismo
 import urnebesna_tragedija
 
 '''
-    TODO (IDEA):
+    TODO:
     - add listener that fetches every minute during the selected days of month
         - railway cron supports something like this:
             * 10-11 21,22,23,24,25 * * 
             (Every minute, between 10:00 and 11:59, on day 21, 22, 23, 24, and 25 of the month)
+    - move email variables to env variables
 '''
 
 global_email_content = ''
@@ -40,7 +41,7 @@ def send_email(subject, content):
         smtp.send_message(msg)
 
 def pozoriste_job():
-    if(date.today().day >= 21 and date.today().day < 26): # check for minutes from 0 to 3 because cron is set for days 21-25
+    if(datetime.now().minute >= 0 and datetime.now().minute < 3):
         # append_to_global(voz.check_dates()) # KUPLJENO
         # append_to_global(milutin.check_dates()) # KUPLJENO
         append_to_global(ljubavno_pismo.check_dates())
@@ -76,7 +77,7 @@ def check_Arena_Today():
 
     event_description = head_info.find_all('p')[1].text.strip()
 
-    if(int(event_date) == date.today().day): # add if hour=12 min=0 so just 1 email is sent
+    if(int(event_date) == date.today().day and datetime.now().hour == 12 and datetime.now().minute == 0):
         send_email('ARENA DANAS', '{}\n{}'.format(event_name, event_description))
 
 check_Arena_Today()
