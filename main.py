@@ -3,7 +3,19 @@ from bs4 import BeautifulSoup
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime, date
-import time
+import voz
+import milutin
+import edip
+import ljubavno_pismo
+import urnebesna_tragedija
+
+'''
+    TODO (IDEA):
+    - add listener that fetches every minute during the selected days of month
+        - railway cron supports something like this:
+            * 10-11 21,22,23,24,25 * * 
+            (Every minute, between 10:00 and 11:59, on day 21, 22, 23, 24, and 25 of the month)
+'''
 
 global_email_content = ''
 
@@ -27,175 +39,19 @@ def send_email(subject, content):
         smtp.login(email_address, email_password)
         smtp.send_message(msg)
 
-# KUPLJENO !!!
-# def check_dates_Voz():
-#     append_to_global('Voz - Zvezdara Teatar:\n')
-#     URL = 'https://zvezdarateatar.rs/predstava/voz/21/#'
-#     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-#     page = requests.get(URL, headers=headers)
-#     soup = BeautifulSoup(page.content, 'html.parser')
-#     dates = soup.find_all('span', 'predstava-dates')
-    
-#     if(dates):
-#         for d in dates:
-#             d = d.get_text().strip()
-#             append_to_global(d + '\n')
-#     else:
-#         append_to_global('Error getting dates\n')
-    
-#     append_to_global('\n')
-
-# KUPLJENO !!!
-# def check_dates_Milutin():
-#     append_to_global('Milutin - Zvezdara Teatar:\n')
-#     URL = 'https://zvezdarateatar.rs/predstava/knjiga-o-milutinu-deo-prvi/10/'
-#     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-#     try:
-#         page = requests.get(URL, headers=headers)
-#     except:
-#         append_to_global('Error getting dates\n')
-#         return
-#     soup = BeautifulSoup(page.content, 'html.parser')
-#     dates = soup.find_all('span', 'predstava-dates')
-    
-#     if(dates):
-#         for d in dates:
-#             d = d.get_text().strip()
-#             append_to_global(d + '\n')
-#     else:
-#         append_to_global('Error getting dates\n')
-    
-#     append_to_global('\n')
-
-def check_dates_Edip():
-    append_to_global('Edip - JDP:\n')
-    URL = 'https://www.jdp.rs/performance/edip/'
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    try:
-        page = requests.get(URL, headers=headers)
-    except:
-        append_to_global('Error getting dates\n')
-        return
-    soup = BeautifulSoup(page.content, 'html.parser')
-    dates = soup.find_all('div', 'calendar__item-date js-date')
-    content = ''
-    for date_div in dates:
-         day_div = date_div.find('div', 'day')
-         day = day_div.find('strong').text
-         month = day_div.find('span').text
-         content += day+' '+month+'\n'
-
-    if(dates):
-        append_to_global(content)    
-    else:
-        append_to_global('Error getting dates\n')
-    
-    append_to_global('\n')
-
-def check_dates_Edip_2():
-    append_to_global('Edip - JDP v2:\n')
-    URL = 'https://blagajna.jdp.rs/qrydata.php'
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    form_data = {
-        'q': '1',
-        'godina': date.today().year,
-        'mesec': date.today().month + 1,
-        'sdsp': '1',
-        'trazi': 'edip',
-        'user_tipid': '',
-        'sap': '1',
-        'ss': '0',
-        'tip_prikaza': '0',
-    }
-    try:
-        results = requests.post(URL, headers=headers, data=form_data).json()
-    except requests.RequestException as e:
-        append_to_global('Error getting dates\n')
-        
-    if(len(results) > 0):
-        for r in results:
-            datum = r['datum']
-            vreme = r['vreme'][0:5]
-            datum_formatted = datetime.strptime(datum, '%Y-%m-%d').strftime('%d. %b')
-            content = "{} - {}\n".format(datum_formatted, vreme)
-            append_to_global(content)
-            
-    append_to_global('\n')
-    
-def check_dates_UrnebesnaTragedija():
-    append_to_global('Urnebesna Tragedija - Narodno:\n')
-    URL = 'https://www.narodnopozoriste.rs/lat/predstave/urnebesna-tragedija'
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    try:
-        page = requests.get(URL, headers=headers)
-    except:
-        append_to_global('Error getting dates\n')
-        return
-    soup = BeautifulSoup(page.content, 'html.parser')
-    dates = soup.find_all('div', 'repertoarwide-entry-date')
-    content = ''
-    for date_div in dates:
-        day = date_div.contents[1].strip()
-        month = date_div.find('span', 'mesec').text
-        content += day+' '+month+'\n'
-
-    if(dates):
-        append_to_global(content)
-    else:
-        append_to_global('Error getting dates\n')
-
-    append_to_global('\n') 
-
-def check_dates_Ljubavno_Pismo():
-    append_to_global('Ljubavno Pismo - Atelje 212:\n')
-    URL = 'https://bilet.atelje212.rs/qrydata.php'
-    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
-    form_data = {
-        'q': '1',
-        'godina': date.today().year,
-        'mesec': date.today().month + 1,
-        'dan': '0',
-        'sdsp': '1',
-        'trazi': 'ljubavno',
-        'user_tipid': '1',
-        'sap': '1',
-        'ss': '0',
-        'tip_prikaza': '0',
-    }
-    '''
-        TODO (IDEA):
-        - switch to this query for every scraper
-        - add listener that fetches every minute during the selected days of month
-            - railway cron supports something like this:
-                * 10-11 20,21,22,23,24,25 * * 
-                (Every minute, between 10:00 and 11:59, on day 20, 21, 22, 23, 24, and 25 of the month)
-        - only if results are found, send email
-    '''
-    try:
-        results = requests.post(URL, headers=headers, data=form_data).json()
-    except requests.RequestException as e:
-        append_to_global('Error getting dates\n')
-    
-    if(len(results) > 0):
-        for r in results:
-            datum = r['datum']
-            vreme = r['vreme'][0:5]
-            datum_formatted = datetime.strptime(datum, '%Y-%m-%d').strftime('%d. %b')
-            content = "{} - {}\n".format(datum_formatted, vreme)
-            append_to_global(content)
-            
-    append_to_global('\n')
-
 def pozoriste_job():
-    if(date.today().day >= 20 and date.today().day < 26):
-        # check_dates_Edip_2() TODO trying new stuff
-        # check_dates_Voz() 
-        # check_dates_Milutin()
-        check_dates_Ljubavno_Pismo()
-        check_dates_Edip()
-        check_dates_UrnebesnaTragedija()
-        # time.sleep(8) # in case scraping takes some time
-        send_email('Pozoriste - datumi', global_email_content)
+    if(date.today().day >= 21 and date.today().day < 26): # check for minutes from 0 to 3 because cron is set for days 21-25
+        # append_to_global(voz.check_dates()) # KUPLJENO
+        # append_to_global(milutin.check_dates()) # KUPLJENO
+        append_to_global(ljubavno_pismo.check_dates())
+        append_to_global(edip.check_dates())
+        # append_to_global(urnebesna_tragedija.check_dates()) # not available any more ?
+        
+        if(len(global_email_content) > 0):
+            print(global_email_content)
+            # send_email('Pozoriste - datumi', global_email_content) # making problems, print for now
+        else:
+            print('No data - email not sent\n')
         clear_global()
 
 pozoriste_job()
@@ -220,7 +76,7 @@ def check_Arena_Today():
 
     event_description = head_info.find_all('p')[1].text.strip()
 
-    if(int(event_date) == date.today().day):
+    if(int(event_date) == date.today().day): # add if hour=12 min=0 so just 1 email is sent
         send_email('ARENA DANAS', '{}\n{}'.format(event_name, event_description))
 
 check_Arena_Today()
