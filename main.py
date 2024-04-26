@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime, date
+from dotenv import load_dotenv
+import os
 import voz
 import milutin
 import edip
@@ -12,12 +14,11 @@ import urnebesna_tragedija
 '''
     TODO:
     - add listener that fetches every minute during the selected days of month
-        - railway cron supports something like this:
+        - railway cron supports something like this: (TESTING)
             * 10-11 21,22,23,24,25 * * 
             (Every minute, between 10:00 and 11:59, on day 21, 22, 23, 24, and 25 of the month)
-    - move email variables to env variables
 '''
-
+load_dotenv()
 global_email_content = ''
 
 def append_to_global(s):
@@ -29,12 +30,12 @@ def clear_global():
     global_email_content = ''
 
 def send_email(subject, content):
-    email_address = "kassad.tips@gmail.com"
-    email_password = "orntdmglacxlbskm" # app password
+    email_address = os.getenv('EMAIL_SENDER')
+    email_password = os.getenv('EMAIL_SENDER_PASSWORD')
     msg = EmailMessage()
     msg['Subject'] = subject + " - " + datetime.now().strftime('%b')
     msg['From'] = email_address
-    msg['To'] = "djolezile@gmail.com"
+    msg['To'] = os.getenv('EMAIL_RECEIVER')
     msg.set_content(content)
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
         smtp.login(email_address, email_password)
@@ -49,7 +50,9 @@ def pozoriste_job():
         # append_to_global(urnebesna_tragedija.check_dates()) # not available any more ?
         
         if(len(global_email_content) > 0):
-            print(global_email_content)
+            print('From:', os.getenv('EMAIL_SENDER'))
+            print('To:', os.getenv('EMAIL_RECEIVER'))
+            print('Body:\n' + global_email_content)
             # send_email('Pozoriste - datumi', global_email_content) # making problems, print for now
         else:
             print('No data - email not sent\n')
