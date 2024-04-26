@@ -50,10 +50,10 @@ def pozoriste_job():
         # append_to_global(urnebesna_tragedija.check_dates()) # not available any more ?
         
         if(len(global_email_content) > 0):
-            print('From:', os.getenv('EMAIL_SENDER'))
-            print('To:', os.getenv('EMAIL_RECEIVER'))
-            print('Body:\n' + global_email_content)
-            # send_email('Pozoriste - datumi', global_email_content) # making problems, print for now
+            # print('From:', os.getenv('EMAIL_SENDER'))
+            # print('To:', os.getenv('EMAIL_RECEIVER'))
+            # print('Body:\n' + global_email_content)
+            send_email('Pozoriste - datumi', global_email_content) # making problems
         else:
             print('No data - email not sent\n')
         clear_global()
