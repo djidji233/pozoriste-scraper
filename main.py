@@ -5,6 +5,8 @@ from email.message import EmailMessage
 from datetime import datetime, date
 from dotenv import load_dotenv
 import os
+import logging
+import sys
 import voz
 import milutin
 import edip
@@ -18,7 +20,11 @@ import urnebesna_tragedija
             * 10-11 21,22,23,24,25 * * 
             (Every minute, between 10:00 and 11:59, on day 21, 22, 23, 24, and 25 of the month)
 '''
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logging.info('Starting the app at: ' + datetime.now().strftime('%H:%M:%S'))
+
 load_dotenv()
+
 global_email_content = ''
 
 def append_to_global(s):
@@ -37,36 +43,40 @@ def send_email(subject, content):
     msg['From'] = email_address
     msg['To'] = os.getenv('EMAIL_RECEIVER')
     msg.set_content(content)
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        smtp.starttls()
         smtp.login(email_address, email_password)
         smtp.send_message(msg)
 
 def pozoriste_job():
-    if(datetime.now().minute >= 0 and datetime.now().minute < 3):
+    logging.info('Running Pozoriste job at: ' + datetime.now().strftime('%H:%M:%S'))
+    if(datetime.now().minute >= 0 and datetime.now().minute < 3): # check first 3 minutes of the hour
         # append_to_global(voz.check_dates()) # KUPLJENO
         # append_to_global(milutin.check_dates()) # KUPLJENO
-        append_to_global(ljubavno_pismo.check_dates())
+        # append_to_global(ljubavno_pismo.check_dates()) # KUPLJENO
         append_to_global(edip.check_dates())
-        # append_to_global(urnebesna_tragedija.check_dates()) # not available any more ?
+        append_to_global(urnebesna_tragedija.check_dates())
         
         if(len(global_email_content) > 0):
             # print('From:', os.getenv('EMAIL_SENDER'))
             # print('To:', os.getenv('EMAIL_RECEIVER'))
             # print('Body:\n' + global_email_content)
-            send_email('Pozoriste - datumi', global_email_content) # making problems
+            logging.info('Sending Pozoriste email\n')
+            send_email('Pozoriste - datumi', global_email_content)
         else:
-            print('No data - email not sent\n')
+            logging.info('No data - email not sent\n')
         clear_global()
 
 pozoriste_job()
 
 def check_Arena_Today():
+    logging.info('Running Arena job at: ' + datetime.now().strftime('%H:%M:%S'))
     URL = 'https://starkarena.co.rs/lat/dogadjaji/'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
     try:
         page = requests.get(URL, headers=headers)
     except:
-        send_email('ARENA DANAS', 'Error getting ARENA page!')
+        send_email('Arena danas!', 'Error getting Arena page!')
         return
     soup = BeautifulSoup(page.content, 'html.parser')
 
@@ -81,6 +91,7 @@ def check_Arena_Today():
     event_description = head_info.find_all('p')[1].text.strip()
 
     if(int(event_date) == date.today().day and datetime.now().hour == 12 and datetime.now().minute == 0):
-        send_email('ARENA DANAS', '{}\n{}'.format(event_name, event_description))
+        logging.info('Sending Arena email\n')
+        send_email('Arena danas!', '{}\n{}'.format(event_name, event_description))
 
 check_Arena_Today()

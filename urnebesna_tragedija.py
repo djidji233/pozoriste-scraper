@@ -22,10 +22,10 @@ def check_dates():
 
     if(dates):
         content += (current_content)
-    else:
-        content += ('No dates\n')
-        return content
 
-    content += ('\n') 
+    content += ('\n')
     
-    return content
+    if(len(content) > len('Urnebesna Tragedija - Narodno:\n\n')):
+        return content
+    else:
+        return ''

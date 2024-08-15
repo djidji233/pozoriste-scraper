@@ -19,9 +19,10 @@ def run(url, name):
     }
     try:
         results = requests.post(URL, headers=headers, data=form_data).json()
+        results = results['resp']
     except:
-        print('{} - Error getting dates\n'.format(name))
-        return ''
+        content += ('{} - Error getting dates\n'.format(name))
+        return content
         
     if(len(results) == 0):
         return ''
