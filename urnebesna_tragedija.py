@@ -1,15 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime, date
+import logging
 
 def check_dates():
+    logging.info('* Checking dates for URNEBESNA TRAGEDIJA')
     content = ''
     content += ('Urnebesna Tragedija - Narodno:\n')
     URL = 'https://www.narodnopozoriste.rs/lat/predstave/urnebesna-tragedija'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
     try:
         page = requests.get(URL, headers=headers)
-    except:
+    except Exception as e:
+        logging.error('!!! Exception: ' + str(e))
         content += ('Error getting dates\n')
         return content
     soup = BeautifulSoup(page.content, 'html.parser')

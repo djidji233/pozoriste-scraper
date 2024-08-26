@@ -1,8 +1,9 @@
 import requests
-from bs4 import BeautifulSoup
 from datetime import datetime, date
+import logging
 
 def run(url, name):
+    logging.info('* Checking dates for ' + name)
     content = ''
     URL = url
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
@@ -18,10 +19,14 @@ def run(url, name):
         'tip_prikaza': '0',
     }
     try:
-        results = requests.post(URL, headers=headers, data=form_data).json()
+        results = requests.post(URL, headers=headers, data=form_data, timeout=10).json()
         results = results['resp']
-    except:
-        content += ('{} - Error getting dates\n'.format(name))
+    except requests.exceptions.Timeout:
+        logging.error('!!! Http request timeout')
+        return ''
+    except Exception as e:
+        logging.error('!!! Exception: ' + str(e))
+        content += ('Error getting dates\n')
         return content
         
     if(len(results) == 0):
