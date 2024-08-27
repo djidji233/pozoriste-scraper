@@ -10,7 +10,7 @@ def run(url, name):
     form_data = {
         'q': '1',
         'godina': date.today().year,
-        'mesec': date.today().month + 1,
+        'mesec': (date.today().month % 12) + 1,
         'sdsp': '1',
         'trazi': name,
         'user_tipid': '',
