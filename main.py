@@ -44,9 +44,8 @@ def send_email(subject, content):
 
 def pozoriste_job():
     logging.info('| Running Pozoriste job')
-    if(datetime.now().minute >= 0 and datetime.now().minute < 3): # check first 3 minutes of the hour
-        append_to_global(edip.check_dates())
-        append_to_global(urnebesna_tragedija.check_dates())
+    append_to_global(edip.check_dates())
+    append_to_global(urnebesna_tragedija.check_dates())
     
     if(len(global_email_content) > 0):
         logging.info('-> Pozoriste email sending...')
@@ -80,7 +79,7 @@ def check_Arena_Today():
 
     event_description = head_info.find_all('p')[1].text.strip()
 
-    if(int(event_date) == date.today().day and datetime.now().hour == 12 and datetime.now().minute == 0):
+    if(int(event_date) == date.today().day and datetime.now().hour == 12):
         logging.info('-> Arena email sending...')
         send_email('Arena danas!', '{}\n{}'.format(event_name, event_description))
         logging.info('-> Arena email sent!')
