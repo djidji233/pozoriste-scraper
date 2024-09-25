@@ -44,7 +44,6 @@ def send_email(subject, content):
 
 def pozoriste_job():
     logging.info('| Running Pozoriste job')
-    append_to_global(edip.check_dates())
     append_to_global(urnebesna_tragedija.check_dates())
     
     if(len(global_email_content) > 0):
