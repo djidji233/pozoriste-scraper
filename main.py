@@ -7,8 +7,7 @@ from dotenv import load_dotenv
 import os
 import logging
 import sys
-import edip
-import urnebesna_tragedija
+import json
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -44,7 +43,7 @@ def send_email(subject, content):
 
 def pozoriste_job():
     logging.info('| Running Pozoriste job')
-    append_to_global(urnebesna_tragedija.check_dates())
+    # append_to_global(urnebesna_tragedija.check_dates()) # left as example
     
     if(len(global_email_content) > 0):
         logging.info('-> Pozoriste email sending...')
@@ -54,7 +53,7 @@ def pozoriste_job():
         logging.info('-> Pozoriste email not sent (no dates)')
     clear_global()
 
-pozoriste_job()
+# pozoriste_job() # no need to run, all tickets bought
 
 def check_Arena_Today():
     logging.info('| Running Arena job')
@@ -86,3 +85,51 @@ def check_Arena_Today():
         logging.info('-> Arena email not sent (no event today)')
 
 check_Arena_Today()
+
+def check_Sava_Centar_Today():
+    logging.info('| Running Sava Centar job')
+    URL = 'https://savacentar.rs/dogadjaji-u-sava-centru/'
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
+    
+    try:
+        page = requests.get(URL, headers=headers)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        
+        # Find the script tag containing our data
+        script = soup.find('script', {'id': 'codemine-calendar-js-js-extra'})
+        if not script:
+            raise Exception('Script tag not found')
+            
+        # Extract the JSON data
+        data_text = script.text
+        json_start = data_text.find('CMCAL_vars_8 = ') + len('CMCAL_vars_8 = ')
+        json_end = data_text.find('};', json_start) + 1
+        json_str = data_text[json_start:json_end]
+        # Parse JSON and get events
+        calendar_data = json.loads(json_str)
+        events = calendar_data.get('all_events', [])
+
+        # Find today's events
+        today = date.today()
+        todays_events = [
+            event for event in events 
+            if event['start'].split('T')[0] == today.strftime('%Y-%m-%d')
+        ]
+        
+        if todays_events and datetime.now().hour == 12:
+            logging.info('-> Sava Centar email sending...')
+            email_content = '\n\n'.join([
+                f"{event['title']}\n"
+                f"Vreme: {event.get('vreme_dogadjaja', 'Unknown')}\n"
+                for event in todays_events
+            ])
+            send_email('Sava Centar danas!', email_content)
+            logging.info('-> Sava Centar email sent!')
+        else:
+            logging.info('-> Sava Centar email not sent (no events today)')
+            
+    except Exception as e:
+        logging.error(f'!!! Exception: {e}')
+        send_email('Sava Centar danas!', 'Error getting Sava Centar page')
+        
+check_Sava_Centar_Today()
