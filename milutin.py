@@ -4,7 +4,7 @@ def check_dates():
     content = ''
     content += ('Milutin - Zvezdara Teatar:\n')
     URL = 'https://bilet.zvezdarateatar.rs/qrydata.php'
-    content += date_checker.run(URL, 'МИЛУТИН')
+    content += date_checker.run(URL, 'MILUTIN')
     if(len(content) > len('Milutin - Zvezdara Teatar:\n')):
         return content
     else:
