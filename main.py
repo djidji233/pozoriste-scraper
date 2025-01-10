@@ -41,7 +41,7 @@ def send_email(subject, content):
         smtp.login(email_address, email_password)
         smtp.send_message(msg)
 
-def pozoriste_job():
+def check_pozoriste():
     logging.info('| Running Pozoriste job')
     # append_to_global(urnebesna_tragedija.check_dates()) # left as example
     
@@ -53,9 +53,7 @@ def pozoriste_job():
         logging.info('-> Pozoriste email not sent (no dates)')
     clear_global()
 
-# pozoriste_job() # no need to run, all tickets bought
-
-def check_Arena_Today():
+def check_arena():
     logging.info('| Running Arena job')
     URL = 'https://starkarena.co.rs/lat/dogadjaji/'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
@@ -84,9 +82,7 @@ def check_Arena_Today():
     else:
         logging.info('-> Arena email not sent (no event today)')
 
-check_Arena_Today()
-
-def check_Sava_Centar_Today():
+def check_sava_centar():
     logging.info('| Running Sava Centar job')
     URL = 'https://savacentar.rs/dogadjaji-u-sava-centru/'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
@@ -132,4 +128,7 @@ def check_Sava_Centar_Today():
         logging.error(f'!!! Exception: {e}')
         send_email('Sava Centar danas!', 'Error getting Sava Centar page')
         
-check_Sava_Centar_Today()
+# RUN
+# check_pozoriste() # no need to run, all tickets bought
+check_arena()
+check_sava_centar()
