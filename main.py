@@ -56,28 +56,42 @@ def check_pozoriste():
 def check_arena():
     logging.info('| Running Arena job')
     URL = 'https://starkarena.co.rs/lat/dogadjaji/'
+    URL_2 = 'https://starkarena.co.rs/lat/'
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36'}
     try:
         page = requests.get(URL, headers=headers)
+        page_2 = requests.get(URL_2, headers=headers)
     except Exception as e:
         logging.error('!!! Exception: ' + str(e))
         send_email('Arena danas!', 'Error getting Arena page')
         return
     soup = BeautifulSoup(page.content, 'html.parser')
+    soup_2 = BeautifulSoup(page_2.content, 'html.parser')
 
     head_info = soup.find('div', 'head_info')
+    head_info_2 = soup_2.find('div', 'head_info')
 
     event_date = head_info.find('p', 'datetime').text.strip()[0:2]
+    event_date_2 = head_info_2.find('p', 'datetime').text.strip()[0:2]
+
     if(event_date.startswith('0')):
         event_date = event_date[1]
+    if(event_date_2.startswith('0')):
+        event_date_2 = event_date_2[1]
 
     event_name = head_info.find('h2').text.strip()
+    event_name_2 = head_info_2.find('h2').text.strip()
 
     event_description = head_info.find_all('p')[1].text.strip()
+    event_description_2 = head_info_2.find_all('p')[1].text.strip()
 
     if(int(event_date) == date.today().day and datetime.now().hour == 12):
         logging.info('-> Arena email sending...')
         send_email('Arena danas!', '{}\n{}'.format(event_name, event_description))
+        logging.info('-> Arena email sent!')
+    elif(int(event_date_2) == date.today().day and datetime.now().hour == 12):
+        logging.info('-> Arena email sending...')
+        send_email('Arena danas!', '{}\n{}'.format(event_name_2, event_description_2))
         logging.info('-> Arena email sent!')
     else:
         logging.info('-> Arena email not sent (no event today)')
@@ -130,5 +144,5 @@ def check_sava_centar():
         
 # RUN
 # check_pozoriste() # no need to run, all tickets bought
-check_arena()
+# check_arena() # arena website is trash, events are not up to date
 check_sava_centar()
