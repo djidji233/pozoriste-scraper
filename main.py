@@ -147,4 +147,4 @@ def check_sava_centar():
 # RUN
 check_pozoriste()
 # check_arena() # arena website is trash, events are not up to date
-check_sava_centar()
+# check_sava_centar()
