@@ -8,6 +8,7 @@ import os
 import logging
 import sys
 import json
+import cudo_u_sarganu
 
 logging.basicConfig(
     stream=sys.stdout,
@@ -44,6 +45,7 @@ def send_email(subject, content):
 def check_pozoriste():
     logging.info('| Running Pozoriste job')
     # append_to_global(urnebesna_tragedija.check_dates()) # left as example
+    append_to_global(cudo_u_sarganu.check_dates())
     
     if(len(global_email_content) > 0):
         logging.info('-> Pozoriste email sending...')
@@ -143,6 +145,6 @@ def check_sava_centar():
         send_email('Sava Centar danas!', 'Error getting Sava Centar page')
         
 # RUN
-# check_pozoriste() # no need to run, all tickets bought
+check_pozoriste()
 # check_arena() # arena website is trash, events are not up to date
 check_sava_centar()
