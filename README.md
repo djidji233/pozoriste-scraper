@@ -8,5 +8,5 @@ Technologies used: Python with BeautifulSoup
 Deployment: Railway (with built-in Cron scheduler for 9 AM)
 
 Plans:
-- provide a google form to select the shows from a dropdown and leave your email
+- create a landing page to select the shows from a dropdown and leave your email
 - import that data to a google sheet and read from it and send the emails automatically based on that data
